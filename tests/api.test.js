@@ -19,9 +19,10 @@ function novoAmbiente() {
   const ctx = {
     SpreadsheetApp: { getActiveSpreadsheet: () => ss },
     CacheService: { getScriptCache: () => ({ get: k => cache[k] ?? null, put: (k, v) => { cache[k] = v; }, remove: k => { delete cache[k]; } }) },
-    PropertiesService: { getScriptProperties: () => ({ getProperty: k => props[k] ?? null }) },
+    PropertiesService: { getScriptProperties: () => ({ getProperty: k => props[k] ?? null, setProperty: (k, v) => { props[k] = v; } }) },
     LockService: { getScriptLock: () => ({ tryLock: () => true, releaseLock() {} }) },
     Utilities: { getUuid: () => crypto.randomUUID(), formatDate: d => d.toISOString().slice(5, 16), DigestAlgorithm: { SHA_256: 'sha256' },
+      computeHmacSha256Signature: (v, k) => Array.from(crypto.createHmac('sha256', k).update(v).digest()).map(b => b > 127 ? b - 256 : b),
       computeDigest: (a, t) => Array.from(crypto.createHash('sha256').update(t).digest()).map(b => b > 127 ? b - 256 : b) },
     ContentService: { MimeType: { JSON: 'json' }, createTextOutput: t => ({ t, setMimeType() { return this; } }) },
   };
@@ -29,7 +30,7 @@ function novoAmbiente() {
   for (const f of ['Calculo.gs', 'Code.gs']) vm.runInContext(fs.readFileSync(__dirname + '/../apps-script/' + f, 'utf8'), ctx);
   ctx.setup();
   const call = q => JSON.parse(ctx.doPost({ postData: { contents: typeof q === 'string' ? q : JSON.stringify(q) } }).t);
-  return { ctx, abas, cache, call };
+  return { ctx, abas, cache, call, props };
 }
 function preparado() {
   const E = novoAmbiente();
@@ -86,13 +87,13 @@ t('público: todas as ativas (com ou sem nome); inativa não aparece', () => {
 t('código SEM nome é ACEITO em voto e avaliação', () => {
   const E = preparado(), av = E.call({ acao: 'login_avaliador', cpf: CPF1, nome: 'Ana Teste' }).token;
   assert.ok(E.call({ acao: 'avaliar', token: av, codigo: 'A04', notas: N(5, 5) }).ok);
-  assert.ok(E.call({ acao: 'votar', votacao: 'pop_I', opcao: 'I02', dispositivo: DEV() }).ok);
+  assert.ok(E.call({ acao: 'votar', votacao: 'pop_I', opcao: 'I02', cpf: gerarCPF(), dispositivo: DEV() }).ok);
 });
 t('código inativo ou inexistente é recusado', () => {
   const E = preparado(), av = E.call({ acao: 'login_avaliador', cpf: CPF1, nome: 'Ana Teste' }).token;
   for (const cod of ['A03', 'A08', 'A10', 'I40', 'A99', 'a01x', '']) {
     assert.strictEqual(E.call({ acao: 'avaliar', token: av, codigo: cod, notas: N(5, 5) }).ok, false, cod);
-    assert.strictEqual(E.call({ acao: 'votar', votacao: cod[0] === 'I' ? 'pop_I' : 'pop_A', opcao: cod, dispositivo: DEV() }).ok, false, cod);
+    assert.strictEqual(E.call({ acao: 'votar', votacao: cod[0] === 'I' ? 'pop_I' : 'pop_A', opcao: cod, cpf: gerarCPF(), dispositivo: DEV() }).ok, false, cod);
   }
   assert.strictEqual(E.abas.votos.d.length, 1); assert.strictEqual(E.abas.avaliacoes.d.length, 1);
 });
@@ -107,16 +108,37 @@ t('validação de entrada de avaliação (nota, tipos, comentário, repetição)
   assert.strictEqual(E.call({ acao: 'avaliar', token: av, codigo: 'A01', notas: N(9, 9) }).ok, false, 'repetida');
   assert.strictEqual(E.abas.avaliacoes.d[1][14], "'=cmd()", 'fórmula neutralizada');
 });
-t('votação fechada recusa; voto duplicado por dispositivo recusa; device inválido recusa', () => {
-  const E = preparado(), d = DEV();
-  assert.ok(E.call({ acao: 'votar', votacao: 'pop_A', opcao: 'A01', dispositivo: d }).ok);
-  assert.strictEqual(E.call({ acao: 'votar', votacao: 'pop_A', opcao: 'A02', dispositivo: d }).ok, false);
-  assert.ok(E.call({ acao: 'votar', votacao: 'pop_I', opcao: 'I01', dispositivo: d }).ok, 'outra categoria pode');
-  assert.strictEqual(E.call({ acao: 'votar', votacao: 'pop_A', opcao: 'A01', dispositivo: 'curto' }).ok, false);
-  assert.strictEqual(E.call({ acao: 'votar', votacao: 'pop_I', opcao: 'A01', dispositivo: DEV() }).ok, false, 'categoria errada');
-  assert.strictEqual(E.call({ acao: 'votar', votacao: 'aval', opcao: 'A01', dispositivo: DEV() }).ok, false);
+t('voto popular por CPF: inválido recusado; 2º voto mesma categoria recusado; mesmo CPF em outra categoria aceito; mesmo celular com outro CPF aceito', () => {
+  const E = preparado(), d = DEV(), V = (votacao, opcao, cpf, disp = DEV()) => E.call({ acao: 'votar', votacao, opcao, cpf, dispositivo: disp });
+  for (const c of ['11111111111', '12345678900', '', undefined, 123]) assert.strictEqual(V('pop_A', 'A01', c).ok, false, String(c));
+  assert.ok(V('pop_A', 'A01', fmtCPF(CPF1), d).ok);
+  const r = V('pop_A', 'A02', CPF1); assert.strictEqual(r.ok, false); assert.strictEqual(r.erro, 'Este CPF já votou nesta categoria.');
+  assert.ok(V('pop_I', 'I01', CPF1, d).ok, 'outra categoria');
+  E.adm('estado', { votacao: 'ideathon', valor: 'aberta' });
+  assert.ok(V('ideathon', 'Equipe 1', CPF1, d).ok, 'ideathon');
+  assert.ok(V('pop_A', 'A01', CPF2, d).ok, 'mesmo celular, outro CPF');
+  assert.strictEqual(V('pop_I', 'A01', gerarCPF()).ok, false, 'categoria errada');
+  assert.strictEqual(V('aval', 'A01', gerarCPF()).ok, false);
   E.adm('estado', { votacao: 'pop_A', valor: 'fechada' });
-  assert.strictEqual(E.call({ acao: 'votar', votacao: 'pop_A', opcao: 'A02', dispositivo: DEV() }).ok, false);
+  assert.strictEqual(V('pop_A', 'A02', gerarCPF()).ok, false, 'fechada');
+});
+t('voto popular: só HMAC na planilha (sem CPF em claro); segredo criado no setup e fora do código', () => {
+  const E = preparado();
+  E.call({ acao: 'votar', votacao: 'pop_A', opcao: 'A01', cpf: fmtCPF(CPF1), dispositivo: DEV() });
+  const linhas = JSON.stringify(E.abas.votos.d);
+  assert.ok(!linhas.includes(CPF1) && !linhas.includes(fmtCPF(CPF1)) && !linhas.includes(CPF1.slice(3, 9)));
+  assert.strictEqual(E.abas.votos.d[0][3], 'cpf_hash'); assert.match(E.abas.votos.d[1][3], /^[a-f0-9]{64}$/);
+  const esperado = crypto.createHmac('sha256', E.props.VOTO_SEGREDO).update(CPF1).digest('hex');
+  assert.strictEqual(E.abas.votos.d[1][3], esperado); assert.match(E.props.VOTO_SEGREDO, /^[a-f0-9]{64}$/);
+  const code = require('fs').readFileSync(__dirname + '/../apps-script/Code.gs', 'utf8'); assert.ok(!code.includes(E.props.VOTO_SEGREDO));
+  const p = JSON.stringify(E.adm('painel')); assert.ok(!p.includes(esperado), 'admin não vê hash'); assert.ok(!p.includes(CPF1));
+});
+t('voto popular: rate limit de CPFs inválidos por cliente', () => {
+  const E = preparado(), d = DEV();
+  for (let i = 0; i < 10; i++) E.call({ acao: 'votar', votacao: 'pop_A', opcao: 'A01', cpf: '11111111111', dispositivo: d });
+  const r = E.call({ acao: 'votar', votacao: 'pop_A', opcao: 'A01', cpf: CPF1, dispositivo: d });
+  assert.strictEqual(r.ok, false); assert.match(r.erro, /Muitas tentativas/);
+  assert.ok(E.call({ acao: 'votar', votacao: 'pop_A', opcao: 'A01', cpf: CPF1, dispositivo: DEV() }).ok, 'outro cliente segue');
 });
 t('ações desconhecidas e JSON inválido dão erro genérico sem stack', () => {
   const E = preparado();
@@ -128,7 +150,7 @@ t('ações desconhecidas e JSON inválido dão erro genérico sem stack', () => 
 t('resposta pública NUNCA contém dispositivo, avaliador, comentário ou startup inativa', () => {
   const E = preparado(), d = DEV(), av = E.call({ acao: 'login_avaliador', cpf: CPF1, nome: 'Ana Teste' }).token;
   E.call({ acao: 'avaliar', token: av, codigo: 'A01', notas: N(8, 8), comentario: 'COMENTARIO-SECRETO' });
-  E.call({ acao: 'votar', votacao: 'pop_A', opcao: 'A01', dispositivo: d });
+  E.call({ acao: 'votar', votacao: 'pop_A', opcao: 'A01', cpf: CPF2, dispositivo: d });
   // avaliação de startup depois desativada não pode vazar
   E.call({ acao: 'avaliar', token: av, codigo: 'A02', notas: N(7, 7) });
   E.adm('startups', { lista: [{ codigo: 'A02', ativo: false, nome: 'Oculta' }] });
@@ -225,7 +247,7 @@ t('dashboard: só admin; resumo, posições e rankings filtrados (feminina / ens
   E.call({ acao: 'avaliar', token: a, codigo: 'A01', notas: N(6, 6) });
   E.call({ acao: 'avaliar', token: b, codigo: 'A04', notas: N(8, 8) });
   E.call({ acao: 'avaliar', token: b, codigo: 'I01', notas: N(7, 7) });
-  E.call({ acao: 'votar', votacao: 'pop_A', opcao: 'A01', dispositivo: DEV() });
+  E.call({ acao: 'votar', votacao: 'pop_A', opcao: 'A01', cpf: gerarCPF(), dispositivo: DEV() });
   assert.strictEqual(E.call({ acao: 'admin', op: 'dashboard', token: a }).ok, false);
   const d = E.adm('dashboard');
   assert.ok(d.ok); assert.strictEqual(d.resumo.avaliacoes, 4); assert.strictEqual(d.resumo.avaliadores_distintos, 2);
@@ -275,7 +297,7 @@ t('admin: editar nome, desativar, adicionar código; valida código e tamanho; a
   assert.ok(s.find(x => x.codigo === 'A04' && x.nome === ''), 'admin vê as sem nome');
 });
 t('limpar exige APAGAR', () => {
-  const E = preparado(); E.call({ acao: 'votar', votacao: 'pop_A', opcao: 'A01', dispositivo: DEV() });
+  const E = preparado(); E.call({ acao: 'votar', votacao: 'pop_A', opcao: 'A01', cpf: gerarCPF(), dispositivo: DEV() });
   assert.strictEqual(E.adm('limpar', { alvo: 'votos' }).ok, false);
   assert.ok(E.adm('limpar', { alvo: 'votos', confirmacao: 'APAGAR' }).ok); assert.strictEqual(E.abas.votos.d.length, 1);
 });
