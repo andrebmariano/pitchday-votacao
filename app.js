@@ -179,14 +179,16 @@
     };
   }
 
-  /* ---------- voto popular ---------- */
+  /* ---------- voto popular: 1 voto por CPF em cada votação ---------- */
   function popular(votacao, titulo, opcoes, largas) {
     estado().then(function (e) {
-      var chave = 'pd_votou_' + votacao, votou = localStorage.getItem(chave);
-      var cab = [el('p', { class: 'eyebrow', text: 'Voto popular · 1 voto por celular' }), el('h1', { text: titulo })];
-      if (votou) return tela(cab, msg('ok', 'Você já votou nesta categoria. Obrigado!'), link('#/', 'btn-sec', 'Início'));
+      var chave = 'pd_votou_' + votacao, jaNeste = localStorage.getItem(chave);
+      var cab = [el('p', { class: 'eyebrow', text: 'Voto popular · 1 voto por CPF' }), el('h1', { text: titulo })];
       if (e.estados[votacao] !== 'aberta') return tela(cab, msg('erro', 'Esta votação está fechada no momento.'), link('#/', 'btn-sec', 'Início'));
       var ops = opcoes(e), escolha = null, bts = [], m = el('div');
+      if (!ops.length) return tela(cab, msg('erro', 'Nenhuma opção disponível ainda.'), link('#/', 'btn-sec', 'Início'));
+      var cpf = el('input', { id: 'cpf-voto', class: 'campo-grande', inputmode: 'numeric', autocomplete: 'off', maxlength: '14', placeholder: '000.000.000-00', 'aria-describedby': 'lgpd-voto' });
+      mascaraDigitacao(cpf);
       var env = el('button', { class: 'btn btn-pri', disabled: true }, 'Escolha uma opção');
       ops.forEach(function (o) {
         var b = el('button', { class: 'opcao', 'aria-pressed': 'false', onclick: function () {
@@ -195,18 +197,24 @@
         } }, o.rotulo, o.valor.length <= 4 ? selos(o.valor) : null);
         bts.push(b);
       });
-      if (!ops.length) return tela(cab, msg('erro', 'Nenhuma opção disponível ainda.'), link('#/', 'btn-sec', 'Início'));
-      tela(cab, el('p', { class: 'ajuda', text: 'Toque na sua escolha e confirme.' }), el('div', { class: 'opcoes' + (largas ? ' largas' : '') }, bts), m, el('div', { class: 'sticky' }, env));
+      tela(cab,
+        jaNeste ? el('div', { class: 'msg msg-aviso', role: 'status', text: 'Este celular já registrou um voto nesta categoria. Se for outra pessoa, pode votar com o próprio CPF.' }) : null,
+        el('p', { class: 'ajuda', text: '1. Toque na sua escolha. 2. Informe seu CPF. 3. Confirme.' }),
+        el('div', { class: 'opcoes' + (largas ? ' largas' : '') }, bts),
+        el('div', { class: 'cartao' }, el('label', { for: 'cpf-voto', text: 'Seu CPF (1 voto por CPF nesta categoria)' }), cpf,
+          el('p', { class: 'lgpd', id: 'lgpd-voto', text: 'LGPD: seu CPF serve só para garantir 1 voto por pessoa. Ele não é gravado nem exibido: guardamos apenas um código irreversível.' })),
+        m, el('div', { class: 'sticky' }, env));
       env.onclick = function () {
+        if (!cpfValido(cpf.value)) { mostraMsg(m, 'erro', 'CPF inválido. Confira os números.'); cpf.focus(); return; }
         var rot = ops.filter(function (o) { return o.valor === escolha; })[0].rotulo;
-        confirmar('Confirmar voto em ' + rot + '?', el('p', { text: 'O voto é único e definitivo.' }), 'Confirmar voto').then(function (ok) {
+        confirmar('Confirmar voto em ' + rot + '?', el('p', { text: 'O voto é único por CPF nesta categoria e não pode ser alterado.' }), 'Confirmar voto').then(function (ok) {
           if (!ok) return; env.disabled = true; env.textContent = 'Enviando…';
-          api({ acao: 'votar', votacao: votacao, opcao: escolha, dispositivo: dispositivo() }).then(function () {
-            localStorage.setItem(chave, '1');
-            tela(el('h1', { text: 'Voto registrado!' }), msg('ok', 'Você votou em ' + rot + '. Obrigado!'), link('#/', 'btn-sec', 'Início'));
+          api({ acao: 'votar', votacao: votacao, opcao: escolha, cpf: cpf.value, dispositivo: dispositivo() }).then(function () {
+            localStorage.setItem(chave, '1'); cpf.value = '';
+            tela(el('h1', { text: 'Voto registrado!' }), msg('ok', 'Você votou em ' + rot + '. Obrigado!'),
+              el('p', { class: 'ajuda', text: 'Quer votar também nas outras categorias? Use os QR codes de cada votação.' }), link('#/', 'btn-sec', 'Início'));
           }, function (err) {
-            if (/já votou/.test(err.message)) localStorage.setItem(chave, '1');
-            env.disabled = false; env.textContent = 'Tentar de novo'; mostraMsg(m, 'erro', err.message);
+            env.disabled = false; env.textContent = 'Votar em ' + rot; mostraMsg(m, 'erro', err.message);
           });
         });
       };

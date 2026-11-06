@@ -22,7 +22,7 @@ Site estático (GitHub Pages) + API em Google Apps Script gravando numa Google S
 - Nota da startup = média das notas dos avaliadores que a avaliaram (1 ou mais); o resultado mostra quantos. Sem avaliação = fora do ranking.
 - Ranking separado por categoria. Desempate: maior Pitch médio, depois maior média dos 8.
 - Avaliadores entram **só com CPF válido** (dígitos verificadores; nome opcional). Cada CPF avalia cada startup uma vez; envio definitivo. Comentário opcional (até 500 caracteres, não aparece no resultado), ligável no painel.
-- Voto popular: 1 voto por celular por votação (marca no navegador + registro no servidor). Nunca se mistura com a nota dos avaliadores.
+- Voto popular: **1 voto por CPF em cada votação** (Ideação, Avançado, Ideathon; o mesmo CPF pode votar nas três). CPF validado pelos dígitos verificadores no celular e no servidor. O CPF do público **não é gravado**: a planilha guarda só `HMAC-SHA256(CPF, VOTO_SEGREDO)`. O celular compartilhado não bloqueia (só mostra um aviso). Nunca se mistura com a nota dos avaliadores.
 
 ## Passo a passo
 
@@ -37,6 +37,8 @@ Site estático (GitHub Pages) + API em Google Apps Script gravando numa Google S
 ### 2. Credenciais (Propriedades do script)
 **Configurações do projeto (engrenagem) → Propriedades do script → Adicionar**:
 - `ADMIN_USUARIO` e `ADMIN_SENHA`: defina com os valores que você escolheu.
+
+- `VOTO_SEGREDO`: criado automaticamente pelo `setup()` (não precisa preencher; não apague nem altere durante o evento, senão o controle de 1 voto por CPF recomeça).
 
 As credenciais ficam **somente** aí, nunca em arquivos do repositório.
 
