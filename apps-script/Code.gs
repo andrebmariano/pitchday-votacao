@@ -2,6 +2,7 @@
  * Code.gs — API do Pitch Day UFPR (Google Apps Script, app da Web).
  * Credenciais SÓ em Script Properties (Configurações do projeto > Propriedades do script):
  *   ADMIN_USUARIO, ADMIN_SENHA  — perfil administrador
+ *   VOTO_SEGREDO                — gerado pelo setup(); chave do HMAC dos CPFs do voto popular
  * Avaliadores entram só com CPF válido (rota não divulgada). Lista branca (aba 'avaliadores_autorizados'):
  *   vazia = qualquer CPF válido avalia; com 1+ CPF = só os autorizados.
  * CPF: só na aba privada 'avaliacoes'; nunca em resposta pública nem em log.
@@ -20,7 +21,7 @@ var CONFIG_PADRAO = { estado_aval: 'fechada', estado_pop_I: 'fechada', estado_po
 var COLS_STARTUPS = ['codigo', 'categoria', 'ativo', 'nome', 'feminina', 'ensino_medio'];
 var A_CODIGOS = ['A01','A02','A03','A04','A05','A06','A07','A09','A11','A12','A13','A14','A15'];
 var SESSAO_SEG = 8 * 3600;          // validade do token
-var RL_MAX = 5, RL_MAX_AVAL = 20, RL_JANELA = 600; // admin: 5 falhas em 10 min -> bloqueio 10 min; avaliadores (chave compartilhada): 20
+var RL_MAX = 5, RL_MAX_AVAL = 20, RL_MAX_VOTO = 10, RL_JANELA = 600; // admin: 5 falhas em 10 min -> bloqueio 10 min; avaliadores (chave compartilhada): 20
 var NOME_MAX = 80, OPCAO_MAX = 60, CODIGO_RE = /^[AI][0-9]{2,3}$/;
 var ERRO_GENERICO = 'Não foi possível concluir. Tente de novo.';
 
@@ -57,7 +58,9 @@ function setup() {
   var atual = lerConfig_();
   Object.keys(CONFIG_PADRAO).forEach(function (k) { if (!(k in atual)) cf.appendRow([k, CONFIG_PADRAO[k]]); });
   aba('avaliacoes', ['data_hora', 'cpf', 'nome', 'codigo', 'c1','c2','c3','c4','c5','c6','c7','c8', 'pitch', 'nota_avaliador', 'comentario']);
-  aba('votos', ['data_hora', 'votacao', 'opcao', 'dispositivo']);
+  var vt = aba('votos', ['data_hora', 'votacao', 'opcao', 'cpf_hash']);
+  if (vt.getDataRange().getValues()[0][3] !== 'cpf_hash') vt.getRange(1, 4).setValue('cpf_hash'); // migra coluna antiga 'dispositivo'
+  segredoVoto_();
   aba('avaliadores_autorizados', ['cpf', 'observacao']);
 }
 
@@ -244,18 +247,33 @@ function avaliar_(sess, q) {
   return { ok: true, codigo: cod };
 }
 
+/** Segredo do HMAC dos CPFs do voto popular (Script Properties; criado automaticamente, nunca no código). */
+function segredoVoto_() {
+  var p = PropertiesService.getScriptProperties(), s = p.getProperty('VOTO_SEGREDO');
+  if (!s) { s = token_(); p.setProperty('VOTO_SEGREDO', s); }
+  return s;
+}
+/** HMAC-SHA256(CPF normalizado, VOTO_SEGREDO) em hex: o CPF do público nunca é gravado em claro. */
+function hashCPFVoto_(cpf) {
+  return Utilities.computeHmacSha256Signature(cpf, segredoVoto_()).map(function (b) { return ('0' + (b & 255).toString(16)).slice(-2); }).join('');
+}
+/** Voto popular: 1 voto por CPF em cada votação (pop_I, pop_A, ideathon). Chamado sob LockService. */
 function votar_(q) {
   var c = lerConfig_(), v = q.votacao;
   if (VOTACOES_POP.indexOf(v) < 0) throw new Falha('Votação inválida.');
   if (c['estado_' + v] !== 'aberta') throw new Falha('Esta votação está fechada.');
-  var disp = typeof q.dispositivo === 'string' ? q.dispositivo : '';
-  if (!/^[a-f0-9]{32}$/.test(disp)) throw new Falha('Dispositivo inválido. Recarregue a página.');
+  // rate limit por cliente (identificador do navegador; sem IP no Apps Script)
+  var disp = typeof q.dispositivo === 'string' && /^[a-f0-9]{32}$/.test(q.dispositivo) ? q.dispositivo : 'anon';
+  if (bloqueado_('voto_' + disp, RL_MAX_VOTO)) throw new Falha('Muitas tentativas. Aguarde 10 minutos.');
+  var cpf = normalizarCPF(q.cpf);
+  if (!cpf) { registraFalha_('voto_' + disp); throw new Falha('CPF inválido. Confira os números.'); }
   var opcao = typeof q.opcao === 'string' ? q.opcao : '';
   var validas = v === 'ideathon' ? opcoesIdeathon_(c)
     : startupsPublicas_().filter(function (s) { return s.categoria === v.slice(4); }).map(function (s) { return s.codigo; });
   if (validas.indexOf(opcao) < 0) throw new Falha('Opção inválida.');
-  if (linhas_('votos').some(function (r) { return r[1] === v && r[3] === disp; })) throw new Falha('Este celular já votou nesta categoria.');
-  sh_('votos').appendRow([new Date(), v, seguro_(opcao), disp]);
+  var h = hashCPFVoto_(cpf);
+  if (linhas_('votos').some(function (r) { return r[1] === v && r[3] === h; })) { registraFalha_('voto_' + disp); throw new Falha('Este CPF já votou nesta categoria.'); }
+  sh_('votos').appendRow([new Date(), v, seguro_(opcao), h]);
   return { ok: true };
 }
 
