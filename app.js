@@ -224,14 +224,14 @@
   /* ---------- resultados ---------- */
   function tabRanking(lista, sem) {
     return [lista.length ? el('table', null, el('tr', null, el('th', { text: '#' }), el('th', { text: 'Startup' }), el('th', { class: 'num', text: 'Nota' }), el('th', { class: 'num', text: 'Aval.' })),
-      lista.map(function (r) { return el('tr', null, el('td', { text: r.posicao + 'º' }), el('td', null, el('b', { text: rotulo(r.codigo) })), el('td', { class: 'num', text: fmt(r.nota) }), el('td', { class: 'num', text: String(r.avaliadores) })); }))
+      lista.map(function (r) { return el('tr', null, el('td', { text: r.posicao + 'º' }), el('td', null, el('b', { text: rotulo(r.codigo) }), selos(r.codigo)), el('td', { class: 'num', text: fmt(r.nota) }), el('td', { class: 'num', text: String(r.avaliadores) })); }))
       : el('p', { text: 'Nenhuma avaliação ainda.' }),
       sem && sem.length ? [el('p', { class: 'ajuda', text: 'Sem avaliação (fora do ranking):' }), el('div', { class: 'chips' }, sem.map(function (c) { return el('span', { class: 'chip', text: c }); }))] : null];
   }
   function tabVotos(l, ehStartup) {
     if (!l.length) return el('p', { text: 'Nenhum voto ainda.' });
     var tot = l.reduce(function (s, x) { return s + x.votos; }, 0);
-    return [el('table', null, l.map(function (x, i) { return el('tr', null, el('td', { text: (i + 1) + 'º' }), el('td', null, el('b', { text: ehStartup ? rotulo(x.opcao) : x.opcao })), el('td', { class: 'num', text: String(x.votos) }), el('td', { class: 'num', text: Math.round(100 * x.votos / tot) + '%' })); })),
+    return [el('table', null, l.map(function (x, i) { return el('tr', null, el('td', { text: (i + 1) + 'º' }), el('td', null, el('b', { text: ehStartup ? rotulo(x.opcao) : x.opcao }), ehStartup ? selos(x.opcao) : null), el('td', { class: 'num', text: String(x.votos) }), el('td', { class: 'num', text: Math.round(100 * x.votos / tot) + '%' })); })),
       el('p', { class: 'ajuda', text: 'Total: ' + tot + ' voto(s).' })];
   }
   function blocoResultados(r, comSem) {
