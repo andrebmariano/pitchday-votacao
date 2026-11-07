@@ -46,6 +46,8 @@
       .then(function (j) { if (!j || !j.ok) throw new Error((j && typeof j.erro === 'string') ? j.erro : 'Erro.'); return j; });
   }
   var SELOS = {};
+  /* Finalistas do voto popular (definidas por André em 07/11/2026, 11h37 BRT). */
+  var FINALISTAS_POP = { A: ['A07', 'A06'], I: ['I27', 'I24'] };
   function guardaNomes(lista) { NOMES = {}; SELOS = {}; (lista || []).forEach(function (s) { if (s.nome) NOMES[s.codigo] = String(s.nome); SELOS[s.codigo] = { f: s.feminina === true, em: s.ensino_medio === true }; }); }
   function selos(cod) { var x = SELOS[cod] || {}; return [x.f ? el('span', { class: 'tag-selo tag-f', text: 'Feminina' }) : null, x.em ? el('span', { class: 'tag-selo tag-em', text: 'Ensino médio' }) : null]; }
   function estado() { return api({ acao: 'estado' }).then(function (j) { EST = j; guardaNomes(j.startups); return j; }); }
@@ -511,7 +513,8 @@
     if (r === 'popular/I' || r === 'popular/A') {
       var c = r.slice(-1);
       return popular('pop_' + c, 'Melhor startup · ' + CAT[c], function (e) {
-        return e.startups.filter(function (s) { return s.categoria === c; }).map(function (s) { return { valor: s.codigo, rotulo: rotulo(s.codigo) }; });
+        var fin = FINALISTAS_POP[c] || [], ok = {}; e.startups.forEach(function (s) { if (s.categoria === c) ok[s.codigo] = true; });
+        return fin.filter(function (cod) { return ok[cod]; }).map(function (cod) { return { valor: cod, rotulo: rotulo(cod) }; });
       });
     }
     if (r === 'ideathon') return popular('ideathon', 'Melhor apresentação · Ideathon', function (e) { return e.ideathon_opcoes.map(function (o) { return { valor: o, rotulo: o }; }); }, true);
