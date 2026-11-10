@@ -4,7 +4,7 @@
 window.PITCHDAY_RESULTADOS_FINAIS = {
  "evento": "Pitch Day Experience 2026 · UFPR",
  "periodo": "4 a 8 de novembro de 2026",
- "instantaneo": "10/11/2026, 10h55 (horário de Brasília)",
+ "instantaneo": "10/11/2026, 11h30 (horário de Brasília)",
  "criterios": [
   {
    "id": "c1",
@@ -479,8 +479,8 @@ window.PITCHDAY_RESULTADOS_FINAIS = {
     "posicao": 9,
     "codigo": "I30",
     "nome": "Rotavia Valares",
-    "feminina": false,
-    "ensino_medio": false,
+    "feminina": true,
+    "ensino_medio": true,
     "avaliacoes": 4,
     "nota": 8.8984375,
     "mediaPitch": 9.25,
@@ -523,8 +523,8 @@ window.PITCHDAY_RESULTADOS_FINAIS = {
     "posicao": 11,
     "codigo": "I28",
     "nome": "Pedalai Valares",
-    "feminina": false,
-    "ensino_medio": false,
+    "feminina": true,
+    "ensino_medio": true,
     "avaliacoes": 3,
     "nota": 8.84375,
     "mediaPitch": 9,
@@ -699,8 +699,8 @@ window.PITCHDAY_RESULTADOS_FINAIS = {
     "posicao": 19,
     "codigo": "I29",
     "nome": "Memoriaviva Caiçara",
-    "feminina": false,
-    "ensino_medio": false,
+    "feminina": true,
+    "ensino_medio": true,
     "avaliacoes": 4,
     "nota": 7.8984375,
     "mediaPitch": 7.5,
@@ -1107,55 +1107,76 @@ window.PITCHDAY_RESULTADOS_FINAIS = {
     },
     {
      "posicao": 2,
+     "codigo": "I30",
+     "nome": "Rotavia Valares",
+     "avaliacoes": 4,
+     "nota": 8.8984375
+    },
+    {
+     "posicao": 3,
      "codigo": "I26",
      "nome": "Biocin",
      "avaliacoes": 4,
      "nota": 8.859375
     },
     {
-     "posicao": 3,
+     "posicao": 4,
+     "codigo": "I28",
+     "nome": "Pedalai Valares",
+     "avaliacoes": 3,
+     "nota": 8.84375
+    },
+    {
+     "posicao": 5,
      "codigo": "I21",
      "nome": "Power Coffee",
      "avaliacoes": 2,
      "nota": 8.234375
     },
     {
-     "posicao": 4,
+     "posicao": 6,
      "codigo": "I02",
      "nome": "H2 Flow",
      "avaliacoes": 2,
      "nota": 7.984375
     },
     {
-     "posicao": 5,
+     "posicao": 7,
+     "codigo": "I29",
+     "nome": "Memoriaviva Caiçara",
+     "avaliacoes": 4,
+     "nota": 7.8984375
+    },
+    {
+     "posicao": 8,
      "codigo": "I33",
      "nome": "Ecorefeitorio",
      "avaliacoes": 3,
      "nota": 7.0625
     },
     {
-     "posicao": 6,
+     "posicao": 9,
      "codigo": "I03",
      "nome": "Micro e macro plásticos",
      "avaliacoes": 2,
      "nota": 6.5625
     },
     {
-     "posicao": 7,
+     "posicao": 10,
      "codigo": "I35",
      "nome": "Kauriz",
      "avaliacoes": 3,
      "nota": 6.447916667
     },
     {
-     "posicao": 8,
+     "posicao": 11,
      "codigo": "I07",
      "nome": "Cuida +",
      "avaliacoes": 3,
      "nota": 6.239583333
     },
     {
-     "posicao": 9,
+     "posicao": 12,
      "codigo": "I39",
      "nome": "Rodas sobre Areia",
      "avaliacoes": 3,
@@ -1175,55 +1196,76 @@ window.PITCHDAY_RESULTADOS_FINAIS = {
     },
     {
      "posicao": 2,
+     "codigo": "I30",
+     "nome": "Rotavia Valares",
+     "avaliacoes": 4,
+     "nota": 8.8984375
+    },
+    {
+     "posicao": 3,
      "codigo": "I26",
      "nome": "Biocin",
      "avaliacoes": 4,
      "nota": 8.859375
     },
     {
-     "posicao": 3,
+     "posicao": 4,
+     "codigo": "I28",
+     "nome": "Pedalai Valares",
+     "avaliacoes": 3,
+     "nota": 8.84375
+    },
+    {
+     "posicao": 5,
      "codigo": "I21",
      "nome": "Power Coffee",
      "avaliacoes": 2,
      "nota": 8.234375
     },
     {
-     "posicao": 4,
+     "posicao": 6,
+     "codigo": "I29",
+     "nome": "Memoriaviva Caiçara",
+     "avaliacoes": 4,
+     "nota": 7.8984375
+    },
+    {
+     "posicao": 7,
      "codigo": "I33",
      "nome": "Ecorefeitorio",
      "avaliacoes": 3,
      "nota": 7.0625
     },
     {
-     "posicao": 5,
+     "posicao": 8,
      "codigo": "I03",
      "nome": "Micro e macro plásticos",
      "avaliacoes": 2,
      "nota": 6.5625
     },
     {
-     "posicao": 6,
+     "posicao": 9,
      "codigo": "I35",
      "nome": "Kauriz",
      "avaliacoes": 3,
      "nota": 6.447916667
     },
     {
-     "posicao": 7,
+     "posicao": 10,
      "codigo": "I42",
      "nome": "Lapa para Todos",
      "avaliacoes": 3,
      "nota": 6.375
     },
     {
-     "posicao": 8,
+     "posicao": 11,
      "codigo": "I07",
      "nome": "Cuida +",
      "avaliacoes": 3,
      "nota": 6.239583333
     },
     {
-     "posicao": 9,
+     "posicao": 12,
      "codigo": "I39",
      "nome": "Rodas sobre Areia",
      "avaliacoes": 3,
