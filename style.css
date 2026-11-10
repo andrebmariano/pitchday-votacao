@@ -134,3 +134,5 @@ tr.podio td{background:#fff4e6}
 th[aria-sort=ascending] .ord::after{content:" ▲"} th[aria-sort=descending] .ord::after{content:" ▼"}
 tr.inativa td{color:#4a5a6a;text-decoration:line-through}
 @media (min-width:900px){main{max-width:1180px}.cards{grid-template-columns:repeat(4,1fr)}}
+/* resultados finais */
+th.num{text-align:right}.tab-final{min-width:820px;font-size:.88rem}.tab-final td:nth-child(2){min-width:200px}

@@ -8,6 +8,7 @@
   var app = document.getElementById('app');
   var CAT = { A: 'Avançado', I: 'Ideação' };
   var EST = null, NOMES = {};
+  var FINAIS = window.PITCHDAY_RESULTADOS_FINAIS || null; // instantâneo estático (resultados-finais.js)
 
   /* ---------- DOM seguro ---------- */
   function el(tag, at) {
@@ -83,8 +84,12 @@
           link('#/popular/I', 'btn-pri', 'Voto popular · Ideação ', selo(s.pop_I)),
           link('#/popular/A', 'btn-pri', 'Voto popular · Avançado ', selo(s.pop_A)),
           link('#/ideathon', 'btn-pri', 'Voto popular · Ideathon ', selo(s.ideathon)),
-          e.resultados_liberados ? link('#/resultados', 'btn-sec', 'Resultados') : null));
-    }, erroTela);
+          FINAIS ? link('#/resultados', 'btn-pri', 'Resultados finais') : (e.resultados_liberados ? link('#/resultados', 'btn-sec', 'Resultados') : null)));
+    }, function (err) {
+      if (!FINAIS) return erroTela(err);
+      tela(el('p', { class: 'eyebrow', text: 'Pitch Day UFPR 2026' }), el('h1', { text: 'Votação encerrada' }),
+        el('nav', { class: 'menu' }, link('#/resultados', 'btn-pri', 'Resultados finais')));
+    });
   }
 
   /* ---------- avaliadores ---------- */
@@ -243,7 +248,73 @@
       cartao('Popular · Ideação', tabVotos(r.populares.pop_I, true)), cartao('Popular · Avançado', tabVotos(r.populares.pop_A, true)),
       cartao('Popular · Ideathon', tabVotos(r.populares.ideathon, false))];
   }
+  /* ---------- resultados finais (instantâneo estático; não depende da API) ---------- */
+  function resultadosFinais(D) {
+    var CK = D.criterios.filter(function (c) { return c.id !== 'pitch'; });
+    function cartao(t, c) { return el('div', { class: 'cartao' }, el('h2', { text: t }), c); }
+    function nomeSt(r) { return [el('b', { text: r.codigo }), r.nome ? ' · ' + r.nome : '', ' ', selosDe(r)]; }
+    function selosDe(r) { return [r.feminina ? el('span', { class: 'tag-selo tag-f', text: 'Feminina' }) : null, r.ensino_medio ? el('span', { class: 'tag-selo tag-em', text: 'Ensino médio' }) : null]; }
+    function th(t, num, title) { return el('th', { class: num ? 'num' : null, scope: 'col', title: title || null, text: t }); }
+    function tabCategoria(l) {
+      if (!l.length) return el('p', { text: 'Nenhuma startup avaliada.' });
+      return el('div', { class: 'tab-scroll' }, el('table', { class: 'tab-final' },
+        el('thead', null, el('tr', null, th('#'), th('Startup'), th('Aval.', true, 'Número de avaliações'), th('Nota final', true),
+          CK.map(function (c, i) { return th('C' + (i + 1), true, c.nome); }), th('Pitch', true, 'Pitch (nota geral)'))),
+        el('tbody', null, l.map(function (r) {
+          return el('tr', { class: r.posicao <= 3 ? 'podio' : null }, el('td', { text: r.posicao + 'º' }), el('td', null, nomeSt(r)),
+            el('td', { class: 'num', text: String(r.avaliacoes) }), el('td', { class: 'num' }, el('b', { text: fmt(r.nota) })),
+            CK.map(function (c) { return el('td', { class: 'num', text: fmt(r.medias[c.id]) }); }), el('td', { class: 'num', text: fmt(r.medias.pitch) }));
+        }))));
+    }
+    function legenda() {
+      return el('p', { class: 'ajuda' }, CK.map(function (c, i) { return 'C' + (i + 1) + ' = ' + c.nome; }).join(' · ') + ' · Pitch = nota geral do pitch. Valores = médias entre os avaliadores.');
+    }
+    function tabPopular(l) {
+      if (!l.length) return el('p', { text: 'Não houve votos registrados.' });
+      var tot = l.reduce(function (s, x) { return s + x.votos; }, 0);
+      return [el('table', null, el('thead', null, el('tr', null, th('#'), th('Startup'), th('Votos', true), th('%', true))),
+        el('tbody', null, l.map(function (x, i) {
+          return el('tr', { class: i === 0 ? 'podio' : null }, el('td', { text: (i + 1) + 'º' }), el('td', null, el('b', { text: x.codigo }), x.nome ? ' · ' + x.nome : ''),
+            el('td', { class: 'num', text: String(x.votos) }), el('td', { class: 'num', text: (100 * x.votos / tot).toFixed(1).replace('.', ',') + '%' }));
+        }))), el('p', { class: 'ajuda', text: 'Total: ' + tot + ' voto(s).' })];
+    }
+    function tabSelo(l) {
+      if (!l.length) return el('p', { class: 'ajuda', text: 'Nenhuma startup avaliada com este selo.' });
+      return el('table', null, el('thead', null, el('tr', null, th('#'), th('Startup'), th('Aval.', true), th('Nota', true))),
+        el('tbody', null, l.map(function (r) {
+          return el('tr', { class: r.posicao <= 3 ? 'podio' : null }, el('td', { text: r.posicao + 'º' }), el('td', null, el('b', { text: r.codigo }), r.nome ? ' · ' + r.nome : ''),
+            el('td', { class: 'num', text: String(r.avaliacoes) }), el('td', { class: 'num', text: fmt(r.nota) }));
+        })));
+    }
+    function finalistas(c) {
+      return el('div', { class: 'chips' }, D.finalistas[c].map(function (cod) {
+        var r = D.ranking[c].filter(function (x) { return x.codigo === cod; })[0];
+        return el('span', { class: 'chip ok', text: cod + (r && r.nome ? ' · ' + r.nome : '') });
+      }));
+    }
+    var pp = Math.round(D.pesos.pitch * 100), pd = Math.round(D.pesos.demais * 100), pc = String(D.pesos.demais / CK.length * 100).replace('.', ',');
+    tela(el('p', { class: 'eyebrow', text: D.evento }), el('h1', { text: 'Resultados finais' }),
+      el('p', { class: 'ajuda', text: D.periodo + '. Instantâneo dos dados gerado em ' + D.instantaneo + '.' }),
+      el('div', { class: 'cartao' }, el('h2', { text: 'Metodologia' }),
+        el('p', { text: 'Cada avaliador atribuiu notas inteiras de 1 a 10 a nove critérios. Nota do avaliador = ' + pp + '% × Pitch + ' + pd + '% × média dos critérios 1 a 8 (cada um vale ' + pc + '%).' }),
+        el('p', { text: 'Nota final da startup = média aritmética das notas dos seus avaliadores. O ranking é separado por categoria (Avançado e Ideação).' }),
+        el('p', { text: 'Desempate: 1º maior média do Pitch; 2º maior média dos critérios 1 a 8. Startups empatadas em todos os critérios dividem a mesma posição.' }),
+        el('p', { class: 'ajuda', text: 'Total de ' + D.totais.avaliacoes + ' avaliações válidas. Equipes sem avaliação válida não constam do ranking, e registros duplicados de uma mesma equipe foram consolidados num único resultado. O voto popular é apurado à parte e não altera a nota dos avaliadores.' })),
+      cartao('Avaliadores · Avançado', [tabCategoria(D.ranking.A), legenda()]),
+      cartao('Avaliadores · Ideação', [tabCategoria(D.ranking.I), legenda()]),
+      cartao('Finalistas do voto popular', [el('h3', { text: 'Avançado' }), finalistas('A'), el('h3', { text: 'Ideação' }), finalistas('I')]),
+      cartao('Voto popular · Avançado', tabPopular(D.popular.A)),
+      cartao('Voto popular · Ideação', tabPopular(D.popular.I)),
+      D.popular.ideathon.length ? cartao('Voto popular · Ideathon', tabPopular(D.popular.ideathon)) : null,
+      cartao('Recorte por selo · Startup feminina', [el('p', { class: 'ajuda', text: 'Posição recalculada só entre as startups com o selo, pelo mesmo método.' }),
+        el('h3', { text: 'Avançado' }), tabSelo(D.selos.feminina.A), el('h3', { text: 'Ideação' }), tabSelo(D.selos.feminina.I)]),
+      cartao('Recorte por selo · Ensino médio', [el('p', { class: 'ajuda', text: 'Posição recalculada só entre as startups com o selo, pelo mesmo método.' }),
+        el('h3', { text: 'Avançado' }), tabSelo(D.selos.ensino_medio.A), el('h3', { text: 'Ideação' }), tabSelo(D.selos.ensino_medio.I)]),
+      el('p', { class: 'ajuda', text: 'Código-fonte e método de cálculo: github.com/andrebmariano/pitchday-votacao' }),
+      link('#/', 'btn-sec', 'Início'));
+  }
   function resultados() {
+    if (FINAIS) return resultadosFinais(FINAIS);
     api({ acao: 'resultados' }).then(function (r) { guardaNomes(r.startups); tela(el('p', { class: 'eyebrow', text: 'Pitch Day UFPR' }), el('h1', { text: 'Resultados' }), blocoResultados(r, false)); }, erroTela);
   }
 
