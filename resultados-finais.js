@@ -1,6 +1,6 @@
 /* Instantâneo estático dos resultados finais do Pitch Day Experience 2026.
    Gerado a partir da base do evento com as funções de apps-script/Calculo.gs (calcularRanking, contarVotos, rankingPorTags).
-   Contém apenas dados agregados por startup: nenhum CPF, código de voto, nome de avaliador, nota individual ou comentário. */
+   Contém apenas dados agregados por startup: nenhum CPF, código de voto, nome de avaliador, nota individual, comentário ou número de avaliadores. */
 window.PITCHDAY_RESULTADOS_FINAIS = {
  "evento": "Pitch Day Experience 2026 · UFPR",
  "periodo": "4 a 8 de novembro de 2026",
@@ -48,7 +48,6 @@ window.PITCHDAY_RESULTADOS_FINAIS = {
   "demais": 0.75
  },
  "totais": {
-  "avaliacoes": 142,
   "votos_pop_A": 68,
   "votos_pop_I": 79,
   "votos_ideathon": 0
@@ -61,7 +60,6 @@ window.PITCHDAY_RESULTADOS_FINAIS = {
     "nome": "Labsoluto",
     "feminina": true,
     "ensino_medio": false,
-    "avaliacoes": 4,
     "nota": 9.65625,
     "mediaPitch": 9.75,
     "mediaDemais": 9.625,
@@ -83,7 +81,6 @@ window.PITCHDAY_RESULTADOS_FINAIS = {
     "nome": "Woofpurr",
     "feminina": false,
     "ensino_medio": false,
-    "avaliacoes": 7,
     "nota": 9.388392857,
     "mediaPitch": 9.428571429,
     "mediaDemais": 9.375,
@@ -105,7 +102,6 @@ window.PITCHDAY_RESULTADOS_FINAIS = {
     "nome": "Medfulness AI",
     "feminina": false,
     "ensino_medio": false,
-    "avaliacoes": 4,
     "nota": 9.171875,
     "mediaPitch": 9.5,
     "mediaDemais": 9.0625,
@@ -127,7 +123,6 @@ window.PITCHDAY_RESULTADOS_FINAIS = {
     "nome": "Lazy360",
     "feminina": false,
     "ensino_medio": false,
-    "avaliacoes": 4,
     "nota": 9.0859375,
     "mediaPitch": 9.25,
     "mediaDemais": 9.03125,
@@ -149,7 +144,6 @@ window.PITCHDAY_RESULTADOS_FINAIS = {
     "nome": "Kyp",
     "feminina": false,
     "ensino_medio": false,
-    "avaliacoes": 5,
     "nota": 8.9875,
     "mediaPitch": 9.4,
     "mediaDemais": 8.85,
@@ -171,7 +165,6 @@ window.PITCHDAY_RESULTADOS_FINAIS = {
     "nome": "Rase",
     "feminina": false,
     "ensino_medio": false,
-    "avaliacoes": 4,
     "nota": 8.8515625,
     "mediaPitch": 8.5,
     "mediaDemais": 8.96875,
@@ -193,7 +186,6 @@ window.PITCHDAY_RESULTADOS_FINAIS = {
     "nome": "Union Core",
     "feminina": false,
     "ensino_medio": false,
-    "avaliacoes": 5,
     "nota": 8.59375,
     "mediaPitch": 8.8,
     "mediaDemais": 8.525,
@@ -215,7 +207,6 @@ window.PITCHDAY_RESULTADOS_FINAIS = {
     "nome": "Mycocircular",
     "feminina": false,
     "ensino_medio": false,
-    "avaliacoes": 3,
     "nota": 8.5625,
     "mediaPitch": 9,
     "mediaDemais": 8.416666667,
@@ -237,7 +228,6 @@ window.PITCHDAY_RESULTADOS_FINAIS = {
     "nome": "Ignis",
     "feminina": false,
     "ensino_medio": false,
-    "avaliacoes": 4,
     "nota": 8.46875,
     "mediaPitch": 8.75,
     "mediaDemais": 8.375,
@@ -259,7 +249,6 @@ window.PITCHDAY_RESULTADOS_FINAIS = {
     "nome": "Eye Gate",
     "feminina": false,
     "ensino_medio": false,
-    "avaliacoes": 5,
     "nota": 8.1,
     "mediaPitch": 7.8,
     "mediaDemais": 8.2,
@@ -281,7 +270,6 @@ window.PITCHDAY_RESULTADOS_FINAIS = {
     "nome": "Nexus V",
     "feminina": false,
     "ensino_medio": false,
-    "avaliacoes": 2,
     "nota": 4.46875,
     "mediaPitch": 4,
     "mediaDemais": 4.625,
@@ -305,7 +293,6 @@ window.PITCHDAY_RESULTADOS_FINAIS = {
     "nome": "AcquaSafe",
     "feminina": true,
     "ensino_medio": true,
-    "avaliacoes": 1,
     "nota": 9.53125,
     "mediaPitch": 10,
     "mediaDemais": 9.375,
@@ -327,7 +314,6 @@ window.PITCHDAY_RESULTADOS_FINAIS = {
     "nome": "Fotobiovolt",
     "feminina": false,
     "ensino_medio": false,
-    "avaliacoes": 4,
     "nota": 9.234375,
     "mediaPitch": 9.75,
     "mediaDemais": 9.0625,
@@ -349,7 +335,6 @@ window.PITCHDAY_RESULTADOS_FINAIS = {
     "nome": "H2 CHECK",
     "feminina": false,
     "ensino_medio": false,
-    "avaliacoes": 2,
     "nota": 9.125,
     "mediaPitch": 9.5,
     "mediaDemais": 9,
@@ -371,7 +356,6 @@ window.PITCHDAY_RESULTADOS_FINAIS = {
     "nome": "Smart Buy",
     "feminina": false,
     "ensino_medio": false,
-    "avaliacoes": 3,
     "nota": 9.104166667,
     "mediaPitch": 9.666666667,
     "mediaDemais": 8.916666667,
@@ -393,7 +377,6 @@ window.PITCHDAY_RESULTADOS_FINAIS = {
     "nome": "DESRIGELTE",
     "feminina": false,
     "ensino_medio": false,
-    "avaliacoes": 1,
     "nota": 9.09375,
     "mediaPitch": 9,
     "mediaDemais": 9.125,
@@ -415,7 +398,6 @@ window.PITCHDAY_RESULTADOS_FINAIS = {
     "nome": "AMBERE CUIDADOS",
     "feminina": false,
     "ensino_medio": false,
-    "avaliacoes": 3,
     "nota": 9.020833333,
     "mediaPitch": 9.333333333,
     "mediaDemais": 8.916666667,
@@ -437,7 +419,6 @@ window.PITCHDAY_RESULTADOS_FINAIS = {
     "nome": "BLT Ambiental",
     "feminina": false,
     "ensino_medio": false,
-    "avaliacoes": 3,
     "nota": 8.958333333,
     "mediaPitch": 9.333333333,
     "mediaDemais": 8.833333333,
@@ -459,7 +440,6 @@ window.PITCHDAY_RESULTADOS_FINAIS = {
     "nome": "Trilha Certa",
     "feminina": false,
     "ensino_medio": false,
-    "avaliacoes": 3,
     "nota": 8.927083333,
     "mediaPitch": 9.333333333,
     "mediaDemais": 8.791666667,
@@ -481,7 +461,6 @@ window.PITCHDAY_RESULTADOS_FINAIS = {
     "nome": "Rotavia Valares",
     "feminina": true,
     "ensino_medio": true,
-    "avaliacoes": 4,
     "nota": 8.8984375,
     "mediaPitch": 9.25,
     "mediaDemais": 8.78125,
@@ -503,7 +482,6 @@ window.PITCHDAY_RESULTADOS_FINAIS = {
     "nome": "Biocin",
     "feminina": true,
     "ensino_medio": true,
-    "avaliacoes": 4,
     "nota": 8.859375,
     "mediaPitch": 9,
     "mediaDemais": 8.8125,
@@ -525,7 +503,6 @@ window.PITCHDAY_RESULTADOS_FINAIS = {
     "nome": "Pedalai Valares",
     "feminina": true,
     "ensino_medio": true,
-    "avaliacoes": 3,
     "nota": 8.84375,
     "mediaPitch": 9,
     "mediaDemais": 8.791666667,
@@ -547,7 +524,6 @@ window.PITCHDAY_RESULTADOS_FINAIS = {
     "nome": "Rota Limpa",
     "feminina": false,
     "ensino_medio": false,
-    "avaliacoes": 3,
     "nota": 8.65625,
     "mediaPitch": 9,
     "mediaDemais": 8.541666667,
@@ -569,7 +545,6 @@ window.PITCHDAY_RESULTADOS_FINAIS = {
     "nome": "BeeCarbon",
     "feminina": false,
     "ensino_medio": false,
-    "avaliacoes": 2,
     "nota": 8.296875,
     "mediaPitch": 9,
     "mediaDemais": 8.0625,
@@ -591,7 +566,6 @@ window.PITCHDAY_RESULTADOS_FINAIS = {
     "nome": "Power Coffee",
     "feminina": true,
     "ensino_medio": true,
-    "avaliacoes": 2,
     "nota": 8.234375,
     "mediaPitch": 8,
     "mediaDemais": 8.3125,
@@ -613,7 +587,6 @@ window.PITCHDAY_RESULTADOS_FINAIS = {
     "nome": "Tracksphere",
     "feminina": false,
     "ensino_medio": false,
-    "avaliacoes": 3,
     "nota": 8.21875,
     "mediaPitch": 9,
     "mediaDemais": 7.958333333,
@@ -635,7 +608,6 @@ window.PITCHDAY_RESULTADOS_FINAIS = {
     "nome": "Sumovi",
     "feminina": false,
     "ensino_medio": false,
-    "avaliacoes": 3,
     "nota": 8.166666667,
     "mediaPitch": 8.666666667,
     "mediaDemais": 8,
@@ -657,7 +629,6 @@ window.PITCHDAY_RESULTADOS_FINAIS = {
     "nome": "Nexus TI",
     "feminina": false,
     "ensino_medio": false,
-    "avaliacoes": 3,
     "nota": 8.041666667,
     "mediaPitch": 8.666666667,
     "mediaDemais": 7.833333333,
@@ -679,7 +650,6 @@ window.PITCHDAY_RESULTADOS_FINAIS = {
     "nome": "H2 Flow",
     "feminina": true,
     "ensino_medio": false,
-    "avaliacoes": 2,
     "nota": 7.984375,
     "mediaPitch": 8.5,
     "mediaDemais": 7.8125,
@@ -701,7 +671,6 @@ window.PITCHDAY_RESULTADOS_FINAIS = {
     "nome": "Memoriaviva Caiçara",
     "feminina": true,
     "ensino_medio": true,
-    "avaliacoes": 4,
     "nota": 7.8984375,
     "mediaPitch": 7.5,
     "mediaDemais": 8.03125,
@@ -723,7 +692,6 @@ window.PITCHDAY_RESULTADOS_FINAIS = {
     "nome": "Algabio",
     "feminina": false,
     "ensino_medio": false,
-    "avaliacoes": 2,
     "nota": 7.75,
     "mediaPitch": 7,
     "mediaDemais": 8,
@@ -745,7 +713,6 @@ window.PITCHDAY_RESULTADOS_FINAIS = {
     "nome": "Hidroguard",
     "feminina": false,
     "ensino_medio": false,
-    "avaliacoes": 2,
     "nota": 7.734375,
     "mediaPitch": 9,
     "mediaDemais": 7.3125,
@@ -767,7 +734,6 @@ window.PITCHDAY_RESULTADOS_FINAIS = {
     "nome": "Ecorefeitorio",
     "feminina": true,
     "ensino_medio": true,
-    "avaliacoes": 3,
     "nota": 7.0625,
     "mediaPitch": 8,
     "mediaDemais": 6.75,
@@ -789,7 +755,6 @@ window.PITCHDAY_RESULTADOS_FINAIS = {
     "nome": "Zéfiro",
     "feminina": false,
     "ensino_medio": false,
-    "avaliacoes": 3,
     "nota": 7.052083333,
     "mediaPitch": 6.333333333,
     "mediaDemais": 7.291666667,
@@ -811,7 +776,6 @@ window.PITCHDAY_RESULTADOS_FINAIS = {
     "nome": "Green Fertify",
     "feminina": false,
     "ensino_medio": false,
-    "avaliacoes": 3,
     "nota": 6.875,
     "mediaPitch": 7,
     "mediaDemais": 6.833333333,
@@ -833,7 +797,6 @@ window.PITCHDAY_RESULTADOS_FINAIS = {
     "nome": "Lunares Rocket",
     "feminina": false,
     "ensino_medio": false,
-    "avaliacoes": 3,
     "nota": 6.822916667,
     "mediaPitch": 6.666666667,
     "mediaDemais": 6.875,
@@ -855,7 +818,6 @@ window.PITCHDAY_RESULTADOS_FINAIS = {
     "nome": "Micro e macro plásticos",
     "feminina": true,
     "ensino_medio": true,
-    "avaliacoes": 2,
     "nota": 6.5625,
     "mediaPitch": 7.5,
     "mediaDemais": 6.25,
@@ -877,7 +839,6 @@ window.PITCHDAY_RESULTADOS_FINAIS = {
     "nome": "Kauriz",
     "feminina": true,
     "ensino_medio": true,
-    "avaliacoes": 3,
     "nota": 6.447916667,
     "mediaPitch": 5.666666667,
     "mediaDemais": 6.708333333,
@@ -899,7 +860,6 @@ window.PITCHDAY_RESULTADOS_FINAIS = {
     "nome": "Lapa para Todos",
     "feminina": false,
     "ensino_medio": true,
-    "avaliacoes": 3,
     "nota": 6.375,
     "mediaPitch": 7,
     "mediaDemais": 6.166666667,
@@ -921,7 +881,6 @@ window.PITCHDAY_RESULTADOS_FINAIS = {
     "nome": "Cuida +",
     "feminina": true,
     "ensino_medio": true,
-    "avaliacoes": 3,
     "nota": 6.239583333,
     "mediaPitch": 6.333333333,
     "mediaDemais": 6.208333333,
@@ -943,7 +902,6 @@ window.PITCHDAY_RESULTADOS_FINAIS = {
     "nome": "Rodas sobre Areia",
     "feminina": true,
     "ensino_medio": true,
-    "avaliacoes": 3,
     "nota": 6.177083333,
     "mediaPitch": 6.333333333,
     "mediaDemais": 6.125,
@@ -965,7 +923,6 @@ window.PITCHDAY_RESULTADOS_FINAIS = {
     "nome": "Hidrovidação",
     "feminina": false,
     "ensino_medio": false,
-    "avaliacoes": 3,
     "nota": 5.947916667,
     "mediaPitch": 6.666666667,
     "mediaDemais": 5.708333333,
@@ -987,7 +944,6 @@ window.PITCHDAY_RESULTADOS_FINAIS = {
     "nome": "Hydroven",
     "feminina": false,
     "ensino_medio": false,
-    "avaliacoes": 3,
     "nota": 5.885416667,
     "mediaPitch": 5.666666667,
     "mediaDemais": 5.958333333,
@@ -1009,7 +965,6 @@ window.PITCHDAY_RESULTADOS_FINAIS = {
     "nome": "Renovae",
     "feminina": false,
     "ensino_medio": false,
-    "avaliacoes": 3,
     "nota": 4.822916667,
     "mediaPitch": 4.666666667,
     "mediaDemais": 4.875,
@@ -1031,7 +986,6 @@ window.PITCHDAY_RESULTADOS_FINAIS = {
     "nome": "Aqua Nova",
     "feminina": false,
     "ensino_medio": false,
-    "avaliacoes": 3,
     "nota": 4.75,
     "mediaPitch": 5,
     "mediaDemais": 4.666666667,
@@ -1093,7 +1047,6 @@ window.PITCHDAY_RESULTADOS_FINAIS = {
      "posicao": 1,
      "codigo": "A02",
      "nome": "Labsoluto",
-     "avaliacoes": 4,
      "nota": 9.65625
     }
    ],
@@ -1102,84 +1055,72 @@ window.PITCHDAY_RESULTADOS_FINAIS = {
      "posicao": 1,
      "codigo": "I43",
      "nome": "AcquaSafe",
-     "avaliacoes": 1,
      "nota": 9.53125
     },
     {
      "posicao": 2,
      "codigo": "I30",
      "nome": "Rotavia Valares",
-     "avaliacoes": 4,
      "nota": 8.8984375
     },
     {
      "posicao": 3,
      "codigo": "I26",
      "nome": "Biocin",
-     "avaliacoes": 4,
      "nota": 8.859375
     },
     {
      "posicao": 4,
      "codigo": "I28",
      "nome": "Pedalai Valares",
-     "avaliacoes": 3,
      "nota": 8.84375
     },
     {
      "posicao": 5,
      "codigo": "I21",
      "nome": "Power Coffee",
-     "avaliacoes": 2,
      "nota": 8.234375
     },
     {
      "posicao": 6,
      "codigo": "I02",
      "nome": "H2 Flow",
-     "avaliacoes": 2,
      "nota": 7.984375
     },
     {
      "posicao": 7,
      "codigo": "I29",
      "nome": "Memoriaviva Caiçara",
-     "avaliacoes": 4,
      "nota": 7.8984375
     },
     {
      "posicao": 8,
      "codigo": "I33",
      "nome": "Ecorefeitorio",
-     "avaliacoes": 3,
      "nota": 7.0625
     },
     {
      "posicao": 9,
      "codigo": "I03",
      "nome": "Micro e macro plásticos",
-     "avaliacoes": 2,
      "nota": 6.5625
     },
     {
      "posicao": 10,
      "codigo": "I35",
      "nome": "Kauriz",
-     "avaliacoes": 3,
      "nota": 6.447916667
     },
     {
      "posicao": 11,
      "codigo": "I07",
      "nome": "Cuida +",
-     "avaliacoes": 3,
      "nota": 6.239583333
     },
     {
      "posicao": 12,
      "codigo": "I39",
      "nome": "Rodas sobre Areia",
-     "avaliacoes": 3,
      "nota": 6.177083333
     }
    ]
@@ -1191,84 +1132,72 @@ window.PITCHDAY_RESULTADOS_FINAIS = {
      "posicao": 1,
      "codigo": "I43",
      "nome": "AcquaSafe",
-     "avaliacoes": 1,
      "nota": 9.53125
     },
     {
      "posicao": 2,
      "codigo": "I30",
      "nome": "Rotavia Valares",
-     "avaliacoes": 4,
      "nota": 8.8984375
     },
     {
      "posicao": 3,
      "codigo": "I26",
      "nome": "Biocin",
-     "avaliacoes": 4,
      "nota": 8.859375
     },
     {
      "posicao": 4,
      "codigo": "I28",
      "nome": "Pedalai Valares",
-     "avaliacoes": 3,
      "nota": 8.84375
     },
     {
      "posicao": 5,
      "codigo": "I21",
      "nome": "Power Coffee",
-     "avaliacoes": 2,
      "nota": 8.234375
     },
     {
      "posicao": 6,
      "codigo": "I29",
      "nome": "Memoriaviva Caiçara",
-     "avaliacoes": 4,
      "nota": 7.8984375
     },
     {
      "posicao": 7,
      "codigo": "I33",
      "nome": "Ecorefeitorio",
-     "avaliacoes": 3,
      "nota": 7.0625
     },
     {
      "posicao": 8,
      "codigo": "I03",
      "nome": "Micro e macro plásticos",
-     "avaliacoes": 2,
      "nota": 6.5625
     },
     {
      "posicao": 9,
      "codigo": "I35",
      "nome": "Kauriz",
-     "avaliacoes": 3,
      "nota": 6.447916667
     },
     {
      "posicao": 10,
      "codigo": "I42",
      "nome": "Lapa para Todos",
-     "avaliacoes": 3,
      "nota": 6.375
     },
     {
      "posicao": 11,
      "codigo": "I07",
      "nome": "Cuida +",
-     "avaliacoes": 3,
      "nota": 6.239583333
     },
     {
      "posicao": 12,
      "codigo": "I39",
      "nome": "Rodas sobre Areia",
-     "avaliacoes": 3,
      "nota": 6.177083333
     }
    ]

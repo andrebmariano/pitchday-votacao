@@ -229,9 +229,9 @@
   }
 
   /* ---------- resultados ---------- */
-  function tabRanking(lista, sem) {
-    return [lista.length ? el('table', null, el('tr', null, el('th', { text: '#' }), el('th', { text: 'Startup' }), el('th', { class: 'num', text: 'Nota' }), el('th', { class: 'num', text: 'Aval.' })),
-      lista.map(function (r) { return el('tr', null, el('td', { text: r.posicao + 'º' }), el('td', null, el('b', { text: rotulo(r.codigo) }), selos(r.codigo)), el('td', { class: 'num', text: fmt(r.nota) }), el('td', { class: 'num', text: String(r.avaliadores) })); }))
+  function tabRanking(lista, sem, comAval) { // comAval: nº de avaliadores só no painel admin
+    return [lista.length ? el('table', null, el('tr', null, el('th', { text: '#' }), el('th', { text: 'Startup' }), el('th', { class: 'num', text: 'Nota' }), comAval ? el('th', { class: 'num', text: 'Aval.' }) : null),
+      lista.map(function (r) { return el('tr', null, el('td', { text: r.posicao + 'º' }), el('td', null, el('b', { text: rotulo(r.codigo) }), selos(r.codigo)), el('td', { class: 'num', text: fmt(r.nota) }), comAval ? el('td', { class: 'num', text: String(r.avaliadores) }) : null); }))
       : el('p', { text: 'Nenhuma avaliação ainda.' }),
       sem && sem.length ? [el('p', { class: 'ajuda', text: 'Sem avaliação (fora do ranking):' }), el('div', { class: 'chips' }, sem.map(function (c) { return el('span', { class: 'chip', text: c }); }))] : null];
   }
@@ -244,7 +244,7 @@
   function blocoResultados(r, comSem) {
     function cartao(t, c) { return el('div', { class: 'cartao' }, el('h2', { text: t }), c); }
     return [el('p', { class: 'ajuda', text: 'Nota do avaliador = 25% Pitch + 75% média dos outros 8 critérios. Nota da startup = média dos seus avaliadores. Desempate: maior Pitch, depois maior média dos 8.' }),
-      ['A', 'I'].map(function (c) { return cartao('Avaliadores · ' + CAT[c], tabRanking(r.ranking[c], comSem ? r.ranking.semAvaliacao[c] : null)); }),
+      ['A', 'I'].map(function (c) { return cartao('Avaliadores · ' + CAT[c], tabRanking(r.ranking[c], comSem ? r.ranking.semAvaliacao[c] : null, comSem)); }),
       cartao('Popular · Ideação', tabVotos(r.populares.pop_I, true)), cartao('Popular · Avançado', tabVotos(r.populares.pop_A, true)),
       cartao('Popular · Ideathon', tabVotos(r.populares.ideathon, false))];
   }
@@ -258,11 +258,11 @@
     function tabCategoria(l) {
       if (!l.length) return el('p', { text: 'Nenhuma startup avaliada.' });
       return el('div', { class: 'tab-scroll' }, el('table', { class: 'tab-final' },
-        el('thead', null, el('tr', null, th('#'), th('Startup'), th('Aval.', true, 'Número de avaliações'), th('Nota final', true),
+        el('thead', null, el('tr', null, th('#'), th('Startup'), th('Nota final', true),
           CK.map(function (c, i) { return th('C' + (i + 1), true, c.nome); }), th('Pitch', true, 'Pitch (nota geral)'))),
         el('tbody', null, l.map(function (r) {
           return el('tr', { class: r.posicao <= 3 ? 'podio' : null }, el('td', { text: r.posicao + 'º' }), el('td', null, nomeSt(r)),
-            el('td', { class: 'num', text: String(r.avaliacoes) }), el('td', { class: 'num' }, el('b', { text: fmt(r.nota) })),
+            el('td', { class: 'num' }, el('b', { text: fmt(r.nota) })),
             CK.map(function (c) { return el('td', { class: 'num', text: fmt(r.medias[c.id]) }); }), el('td', { class: 'num', text: fmt(r.medias.pitch) }));
         }))));
     }
@@ -280,10 +280,10 @@
     }
     function tabSelo(l) {
       if (!l.length) return el('p', { class: 'ajuda', text: 'Nenhuma startup avaliada com este selo.' });
-      return el('table', null, el('thead', null, el('tr', null, th('#'), th('Startup'), th('Aval.', true), th('Nota', true))),
+      return el('table', null, el('thead', null, el('tr', null, th('#'), th('Startup'), th('Nota', true))),
         el('tbody', null, l.map(function (r) {
           return el('tr', { class: r.posicao <= 3 ? 'podio' : null }, el('td', { text: r.posicao + 'º' }), el('td', null, el('b', { text: r.codigo }), r.nome ? ' · ' + r.nome : ''),
-            el('td', { class: 'num', text: String(r.avaliacoes) }), el('td', { class: 'num', text: fmt(r.nota) }));
+            el('td', { class: 'num', text: fmt(r.nota) }));
         })));
     }
     function finalistas(c) {
@@ -299,7 +299,7 @@
         el('p', { text: 'Cada avaliador atribuiu notas inteiras de 1 a 10 a nove critérios. Nota do avaliador = ' + pp + '% × Pitch + ' + pd + '% × média dos critérios 1 a 8 (cada um vale ' + pc + '%).' }),
         el('p', { text: 'Nota final da startup = média aritmética das notas dos seus avaliadores. O ranking é separado por categoria (Avançado e Ideação).' }),
         el('p', { text: 'Desempate: 1º maior média do Pitch; 2º maior média dos critérios 1 a 8. Startups empatadas em todos os critérios dividem a mesma posição.' }),
-        el('p', { class: 'ajuda', text: 'Total de ' + D.totais.avaliacoes + ' avaliações válidas. Equipes sem avaliação válida não constam do ranking, e registros duplicados de uma mesma equipe foram consolidados num único resultado. O voto popular é apurado à parte e não altera a nota dos avaliadores.' })),
+        el('p', { class: 'ajuda', text: 'Equipes sem avaliação válida não constam do ranking, e registros duplicados de uma mesma equipe foram consolidados num único resultado. O voto popular é apurado à parte e não altera a nota dos avaliadores.' })),
       cartao('Avaliadores · Avançado', [tabCategoria(D.ranking.A), legenda()]),
       cartao('Avaliadores · Ideação', [tabCategoria(D.ranking.I), legenda()]),
       cartao('Finalistas do voto popular', [el('h3', { text: 'Avançado' }), finalistas('A'), el('h3', { text: 'Ideação' }), finalistas('I')]),
